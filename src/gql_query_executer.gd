@@ -4,19 +4,15 @@ class_name GQLQueryExecuter
 
 signal graphql_response
 
-var endpoint: String
-var query: GQLQuery
-var use_ssl: bool
-var query_cached: String
+export(String, MULTILINE) var query: String
 
-var headers = ["Content-Type: application/json"]
+var headers := {}
 var request : HTTPRequest
 
-
-func _init(_endpoint:String, _use_ssl: bool, _query: GQLQuery):
-	endpoint = _endpoint
-	query = _query
-	use_ssl = _use_ssl
+func _init(_query: String=""):
+	print(_query, query)
+	if len(_query)>0:
+		query = _query
 
 func _ready():
 	request = HTTPRequest.new()
@@ -26,19 +22,19 @@ func _ready():
 func request_completed( result:int, response_code: int, headers: PoolStringArray, body: PoolByteArray):
 	print("Request completed:", result, ",",  response_code)
 	if response_code!=200:
-		print("Query:"+query_cached)
+		print("Query:"+query)
 		print("Response:"+body.get_string_from_utf8())
 	var json = JSON.parse(body.get_string_from_utf8())
 	emit_signal('graphql_response', json.result)
 
-func run(variables: Dictionary):
+func run(client: GQLClient, variables: Dictionary):
 	assert(request!=null, 'You should add this node to the childs')
-	if ! query_cached:
-		query_cached = query.serialize()
+	var use_ssl = client.use_ssl
 	var data_to_send = {
-		"query": query_cached,
+		"query": query,
 		"variables": variables,
 	}
 	print("h:", headers, "use_ssl:", use_ssl)
-	var err=request.request(endpoint, headers, false, HTTPClient.METHOD_POST, JSON.print(data_to_send))
-	print("Request to: ", endpoint, " return: ", err)
+	var headers_list = client.generate_headers(headers)
+	var err=request.request(client.endpoint, headers_list, false, HTTPClient.METHOD_POST, JSON.print(data_to_send))
+	print("Request to: ", client.endpoint, " return: ", err)

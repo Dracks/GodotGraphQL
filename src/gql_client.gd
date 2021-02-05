@@ -2,56 +2,38 @@ extends Node
 
 class_name GQLClient
 
+var host: String
 var endpoint: String
 var use_ssl: bool
+var headers:= {
+	"Content-Type": "application/json"
+}
 
 
-class AbstractQuery:
-	extends GQLQuery
-
-	func _init(name:String).(name):
-		pass
-
-	func _serialize_args()->String:
-		var query = " ("
-		var sep = "$"
-		for variable in args_list.keys():
-			query +=sep+variable+": "+args_list[variable]
-			sep = ", $"
-		return query + ")"
-
-
-class Query:
-	extends AbstractQuery
-
-	func _init(name:String).("query "+name):
-		pass
-
-class Mutation:
-	extends AbstractQuery
-
-	func _init(name:String).("mutation "+name):
-		pass
-
-func set_endpoint(is_secure: bool, host: String, port: int, path: String):
-	endpoint = "http://"
+func set_endpoint(is_secure: bool, _host: String, port: int, path: String):
+	host = "http://"
 	use_ssl = is_secure
 	if is_secure:
-		endpoint = "https://"
-	endpoint += host
+		host = "https://"
+	host += _host
 	if port!=0:
-		endpoint += ":{0}".format([port])
-	endpoint += path
+		host += ":{0}/".format([port])
+	endpoint = host+path
+
+func add_header(name:String, value: String):
+	headers[name]=value
 
 
-func query(name:String, args: Dictionary, query: GQLQuery):
-	var _query = Query.new(name).set_args(args).add_prop(query)
-	return GQLQueryExecuter.new(endpoint, use_ssl, _query)
+func generate_headers(head: Dictionary)-> PoolStringArray:
+	var new_headers := {}
+	for key in headers.keys():
+		new_headers[key] = headers[key]
 
-func mutation(name:String, args: Dictionary, query: GQLQuery):
-	var _query = Mutation.new(name).set_args(args).add_prop(query)
-	return GQLQueryExecuter.new(endpoint, use_ssl, _query)
+	for key in head.keys():
+		new_headers[key] = head[key]
 
+	var headers_list:= PoolStringArray()
+	for key in new_headers.keys():
+		headers_list.push_back(key+": "+new_headers[key])
 
-func raw(query:String):
-	return GQLQueryExecuter.new(endpoint, use_ssl, Query.new(query))
+	return headers_list
