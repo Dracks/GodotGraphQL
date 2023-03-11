@@ -30,7 +30,7 @@ func _serialize_args()->String:
 
 func serialize():
 	var query = name
-	if args_list and args_list.size()>0:
+	if args_list.size()>0:
 		query += self._serialize_args()
 
 	if props_list.size()>0:
