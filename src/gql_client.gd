@@ -9,8 +9,8 @@ var use_ssl: bool
 class AbstractQuery:
 	extends GQLQuery
 
-	func _init(name:String).(name):
-		pass
+	func _init(name:String):
+		super(name);
 
 	func _serialize_args()->String:
 		var query = " ("
@@ -24,14 +24,14 @@ class AbstractQuery:
 class Query:
 	extends AbstractQuery
 
-	func _init(name:String).("query "+name):
-		pass
+	func _init(name:String):
+		super("query "+name)
 
 class Mutation:
 	extends AbstractQuery
 
-	func _init(name:String).("mutation "+name):
-		pass
+	func _init(name:String):
+		super("mutation "+name)
 
 func set_endpoint(is_secure: bool, host: String, port: int, path: String):
 	endpoint = "http://"

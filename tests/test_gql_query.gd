@@ -1,4 +1,4 @@
-extends "res://addons/gut/test.gd"
+extends GutTest
 
 func test_simple_prop():
 	var subject = GQLQuery.new("prop1")
