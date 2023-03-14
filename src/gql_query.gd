@@ -2,7 +2,7 @@ class_name GQLQuery
 
 var name: String
 var props_list: Array = []
-var args_list: Dictionary
+var args_list: Dictionary = {}
 
 func _init(_name: String):
 	name = _name
