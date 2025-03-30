@@ -27,18 +27,31 @@ func _serialize_args()->String:
 		sep = ", "
 	return query + ")"
 
+func _serialize_args_usage() -> String:
+	var query = "("
+	var sep = ""
+	for variable in args_list.keys():
+		query += sep + variable + ": $" + variable
+		sep = ", "
+	return query + ")"
 
-func serialize():
+func serialize() -> String:
 	var query = name
-	if args_list.size()>0:
-		query += self._serialize_args()
+	if args_list.size() > 0:
+		query += " " + _serialize_args()
 
-	if props_list.size()>0:
+	if props_list.size() > 0:
 		query += " {\n"
 		for prop in props_list:
-			if typeof(prop)==TYPE_STRING:
-				query +=prop+"\n"
+			if typeof(prop) == TYPE_STRING:
+				query += prop + "\n"
 			else:
-				query +=prop.serialize()+"\n"
-		query +="}"
+				query += prop.name
+				if prop.args_list.size() > 0:
+					query += " " + prop._serialize_args_usage()
+				query += " {\n"
+				for p in prop.props_list:
+					query += p + "\n"
+				query += "}\n"
+		query += "}"
 	return query

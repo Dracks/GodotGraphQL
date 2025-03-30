@@ -1,4 +1,10 @@
 # Godot GraphQLClient Addon
+
+## Install GUT 
+Before installing this, make sure to install GUT otherwise this addon won't work 
+See 
+https://gut.readthedocs.io/en/latest/index.html
+
 ## Instalation
 1. download the contents (or clone) and put inside $PROJECT/addons
 2. Create a class extending GQLClient

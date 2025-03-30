@@ -42,6 +42,6 @@ func run(variables: Dictionary):
 	}
 	print("h:", headers, "use_ssl:", use_ssl)
 	var body = JSON.new().stringify(data_to_send)
+	print
 	var err=request.request(endpoint, headers, HTTPClient.METHOD_POST, body)
 	print("Request to: ", endpoint, " return: ", err)
-
