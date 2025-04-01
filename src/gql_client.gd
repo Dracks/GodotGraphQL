@@ -13,6 +13,10 @@ class AbstractQuery:
 	func _init(name:String):
 		super(name);
 
+	func set_args(args: Dictionary) -> GQLQuery:
+		args_list = args
+		return self
+
 	func _serialize_args()->String:
 		var query = " ("
 		var sep = "$"
@@ -33,10 +37,10 @@ class Mutation:
 
 	func _init(name:String):
 		super("mutation "+name)
-		
+
 class Subscription:
 	extends AbstractQuery
-	
+
 	func _init(name: String):
 		super("subscription "+name)
 
