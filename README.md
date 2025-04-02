@@ -1,7 +1,7 @@
 # Godot GraphQLClient Addon
 
 ## Prerequisits
-You need to have GUT in your project. 
+You need to have GUT in your project.
 See https://gut.readthedocs.io/en/latest/Install.html
 
 ## Instalation
@@ -14,22 +14,22 @@ See https://gut.readthedocs.io/en/latest/Install.html
 This library uses his own objects to create the query. But provide also a raw argument to call with a string.
 
 1. create some graphql query:
-```
-var query =GQLQuery.new("someProp").set_args({"variable":"arg"}).set_props([
+```gdscript
+var query =GQLQuery.new("someProp").set_args_v2({"arg":"variable"}).set_props([
 	"otherProp",
 	GQLQuery.new("moreComplexProp")
 ])
 ```
 
 2. Call to your singleton to the query method and add it to your node_tree:
-```
-var my_query_executer = ServerConfigInstance.query("NameOfTheQuery", {"SomeVariables":"HisType"}, query)
+```gdscript
+var my_query_executer = ServerConfigInstance.query("NameOfTheQuery", {"variable":"HisType"}, query)
 ```
 
 3. Connect to graphql_response signal to retrieve the data
 4. Execute the run method with the variables as args
-```
-my_query_executor.run({"SomeVariables":42})
+```gdscript
+my_query_executor.run({"variable":42})
 ```
 
 You can see the [sample project](https://github.com/Dracks/godot-gql-test)
@@ -43,7 +43,7 @@ You can see the [sample project](https://github.com/Dracks/godot-gql-test)
 ## Documentation
 ### GQLQuery samples
 The sample of use in the usage will generate something like this:
-```
+```graphql
 someProp(arg:$variable){
 	otherProp
 	moreComplexProp
@@ -51,21 +51,21 @@ someProp(arg:$variable){
 ```
 
 As you can see there is no query information or mutation. The query or mutation is added when you call to client.query or client.mutation. The query generated in the point usage 4 is the following:
-```
-query NameOfTheQuery(SomeVariable: HisType){
+```graphql
+query NameOfTheQuery(variable: HisType){
 	someProp(arg:$variable){
 		otherProp
 		moreComplexProp
 	}
 }
 ```
-Adding the variable of SomeVariable to 42
+Adding the variable of variable to 42
 
 ### Writing the graphql with samples
 1. Query a field with variables
 ```gdscript
 var gqlClient : GqlClient = get_node('/root/GqlClient')
-var subject = GQLQuery.new("prop").set_args({"input": "argument"}).set_props(["sample"])
+var subject = GQLQuery.new("prop").set_args_v2({"argument": "input"}).set_props(["sample"])
 var executor = gqlClient.query("queryName", {"input": "String" }, subject)
 ```
 
@@ -73,6 +73,22 @@ Will generate
 ```Gql
 query queryName ($input: String) {
    prop(argument: $input){
+	   sample
+   }
+}
+```
+
+2. Using variable shortcut, when the argument name is the same as the variable, we can use a $ to automatically match them
+```gdscript
+var gqlClient : GqlClient = get_node('/root/GqlClient')
+var subject = GQLQuery.new("prop").set_args_v2({"argument": "$"}).set_props(["sample"])
+var executor = gqlClient.query("queryName", {"argument": "String" }, subject)
+```
+
+Will generate
+```Gql
+query queryName ($argument: String) {
+   prop(argument: $argument){
 	   sample
    }
 }
