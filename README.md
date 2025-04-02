@@ -1,4 +1,9 @@
 # Godot GraphQLClient Addon
+
+## Prerequisits
+You need to have GUT in your project. 
+See https://gut.readthedocs.io/en/latest/Install.html
+
 ## Instalation
 1. download the contents (or clone) and put inside $PROJECT/addons
 2. Create a class extending GQLClient
@@ -27,6 +32,8 @@ var my_query_executer = ServerConfigInstance.query("NameOfTheQuery", {"SomeVaria
 my_query_executor.run({"SomeVariables":42})
 ```
 
+You can see the [sample project](https://github.com/Dracks/godot-gql-test)
+
 ## Features
 * Tested with a django-graphene server
 * Do queries and mutations
@@ -54,3 +61,19 @@ query NameOfTheQuery(SomeVariable: HisType){
 ```
 Adding the variable of SomeVariable to 42
 
+### Writing the graphql with samples
+1. Query a field with variables
+```gdscript
+var gqlClient : GqlClient = get_node('/root/GqlClient')
+var subject = GQLQuery.new("prop").set_args({"input": "argument"}).set_props(["sample"])
+var executor = gqlClient.query("queryName", {"input": "String" }, subject)
+```
+
+Will generate
+```Gql
+query queryName ($input: String) {
+   prop(argument: $input){
+	   sample
+   }
+}
+```
